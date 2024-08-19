@@ -7,6 +7,7 @@ from joblib import Parallel, delayed
 
 def video_process(video_file_path, dst_root_path, ext, fps=-1, size=240):
     if ext != video_file_path.suffix:
+        print('blaat2')
         return
 
     ffprobe_cmd = ('ffprobe -v error -select_streams v:0 '
@@ -17,6 +18,7 @@ def video_process(video_file_path, dst_root_path, ext, fps=-1, size=240):
     p = subprocess.run(ffprobe_cmd, capture_output=True)
     res = p.stdout.decode('utf-8').splitlines()
     if len(res) < 4:
+        print('blaat')
         return
 
     frame_rate = [float(r) for r in res[2].split('/')]

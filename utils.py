@@ -95,3 +95,10 @@ def partialclass(cls, *args, **kwargs):
         __init__ = partialmethod(cls.__init__, *args, **kwargs)
 
     return PartialClass
+
+
+def get_class_weights(dataset):
+    if dataset == 'workoutform':
+        return [0.57390443, 0.1451972, 0.28089837]
+
+    return None

@@ -20,7 +20,7 @@ def get_training_data(video_path,
                       temporal_transform=None,
                       target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'workoutform'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -53,6 +53,16 @@ def get_training_data(video_path,
                                     target_transform=target_transform,
                                     video_loader=loader,
                                     video_path_formatter=video_path_formatter)
+    elif dataset_name == 'workoutform':
+        training_data = VideoDataset(video_path,
+                                     annotation_path,
+                                     'training',
+                                     spatial_transform=spatial_transform,
+                                     temporal_transform=temporal_transform,
+                                     target_transform=target_transform,
+                                     video_loader=loader,
+                                     video_path_formatter=(lambda root_path, label, video_id:
+                                                           root_path / video_id))
     else:
         training_data = VideoDataset(video_path,
                                      annotation_path,
@@ -75,7 +85,7 @@ def get_validation_data(video_path,
                         temporal_transform=None,
                         target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'workoutform'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -108,6 +118,15 @@ def get_validation_data(video_path,
                                       target_transform=target_transform,
                                       video_loader=loader,
                                       video_path_formatter=video_path_formatter)
+    elif dataset_name == 'workoutform':
+        validation_data = VideoDataset(video_path,
+                                       annotation_path,
+                                       'validation',
+                                       spatial_transform=spatial_transform,
+                                       temporal_transform=temporal_transform,
+                                       target_transform=target_transform,
+                                       video_loader=loader,
+                                       video_path_formatter=(lambda root_path, label, video_id: root_path / video_id))
     else:
         validation_data = VideoDatasetMultiClips(
             video_path,
@@ -132,7 +151,7 @@ def get_inference_data(video_path,
                        temporal_transform=None,
                        target_transform=None):
     assert dataset_name in [
-        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit'
+        'kinetics', 'activitynet', 'ucf101', 'hmdb51', 'mit', 'workoutform'
     ]
     assert input_type in ['rgb', 'flow']
     assert file_type in ['jpg', 'hdf5']
@@ -173,6 +192,16 @@ def get_inference_data(video_path,
                                      video_loader=loader,
                                      video_path_formatter=video_path_formatter,
                                      is_untrimmed_setting=True)
+        
+    elif dataset_name == 'workoutform':
+        inference_data = VideoDataset(video_path,
+                                       annotation_path,
+                                       subset,
+                                       spatial_transform=spatial_transform,
+                                       temporal_transform=temporal_transform,
+                                       target_transform=target_transform,
+                                       video_loader=loader,
+                                       video_path_formatter=(lambda root_path, label, video_id: root_path / video_id))
     else:
         inference_data = VideoDatasetMultiClips(
             video_path,

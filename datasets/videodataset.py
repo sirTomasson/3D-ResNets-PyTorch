@@ -35,6 +35,8 @@ def get_database(data, subset, root_path, video_path_formatter):
     return video_ids, video_paths, annotations
 
 
+
+  
 class VideoDataset(data.Dataset):
 
     def __init__(self,
@@ -73,7 +75,6 @@ class VideoDataset(data.Dataset):
         idx_to_class = {}
         for name, label in class_to_idx.items():
             idx_to_class[label] = name
-
         n_videos = len(video_ids)
         dataset = []
         for i in range(n_videos):
@@ -89,6 +90,7 @@ class VideoDataset(data.Dataset):
 
             video_path = video_paths[i]
             if not video_path.exists():
+                print(f' {video_path} does not exist')
                 continue
 
             segment = annotations[i]['segment']

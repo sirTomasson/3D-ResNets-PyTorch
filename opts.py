@@ -107,7 +107,7 @@ def parse_opts():
                         default='kinetics',
                         type=str,
                         help=('dataset for mean values of mean subtraction'
-                              '(activitynet | kinetics | 0.5)'))
+                              '(activitynet | kinetics | workoutform | 0.5)'))
     parser.add_argument('--no_mean_norm',
                         action='store_true',
                         help='If true, inputs are not normalized by mean.')

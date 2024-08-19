@@ -26,7 +26,7 @@ from temporal_transforms import (LoopPadding, TemporalRandomCrop,
                                  SlidingWindow, TemporalSubsampling)
 from temporal_transforms import Compose as TemporalCompose
 from dataset import get_training_data, get_validation_data, get_inference_data
-from utils import Logger, worker_init_fn, get_lr
+from utils import Logger, worker_init_fn, get_lr, get_class_weights
 from training import train_epoch
 from validation import val_epoch
 import inference
@@ -139,6 +139,7 @@ def get_train_utils(opt, model_parameters):
     elif opt.train_crop == 'center':
         spatial_transform.append(Resize(opt.sample_size))
         spatial_transform.append(CenterCrop(opt.sample_size))
+    
     normalize = get_normalize_method(opt.mean, opt.std, opt.no_mean_norm,
                                      opt.no_std_norm)
     if not opt.no_hflip:
@@ -242,15 +243,14 @@ def get_val_utils(opt):
             val_data, shuffle=False)
     else:
         val_sampler = None
+
     val_loader = torch.utils.data.DataLoader(val_data,
-                                             batch_size=(opt.batch_size //
-                                                         opt.n_val_samples),
+                                             batch_size=opt.batch_size,
                                              shuffle=False,
                                              num_workers=opt.n_threads,
                                              pin_memory=True,
                                              sampler=val_sampler,
-                                             worker_init_fn=worker_init_fn,
-                                             collate_fn=collate_fn)
+                                             worker_init_fn=worker_init_fn)
 
     if opt.is_master_node:
         val_logger = Logger(opt.result_path / 'val.log',
@@ -318,6 +318,9 @@ def save_checkpoint(save_file_path, epoch, arch, model, optimizer, scheduler):
 def main_worker(index, opt):
     random.seed(opt.manual_seed)
     np.random.seed(opt.manual_seed)
+    mp.set_sharing_strategy('file_descriptor')
+    current_strategy = mp.get_sharing_strategy()
+    print(f"Current sharing strategy: {current_strategy}")
     torch.manual_seed(opt.manual_seed)
 
     if index >= 0 and opt.device.type == 'cuda':
@@ -353,8 +356,16 @@ def main_worker(index, opt):
     if opt.is_master_node:
         print(model)
 
-    criterion = CrossEntropyLoss().to(opt.device)
+    class_weights = get_class_weights(opt.dataset)
+    if class_weights:
+        # TODO: enable class weights, first test with normalised dataset
+        print(f'Using class_weights={class_weights}')
+        class_weights = torch.tensor(class_weights)
+        criterion = CrossEntropyLoss(weight=class_weights)
+    else:
+        criterion = CrossEntropyLoss()
 
+    criterion.to(opt.device)
     if not opt.no_train:
         (train_loader, train_sampler, train_logger, train_batch_logger,
          optimizer, scheduler) = get_train_utils(opt, parameters)
