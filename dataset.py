@@ -128,15 +128,14 @@ def get_validation_data(video_path,
                                        video_loader=loader,
                                        video_path_formatter=(lambda root_path, label, video_id: root_path / video_id))
     else:
-        validation_data = VideoDatasetMultiClips(
-            video_path,
-            annotation_path,
-            'validation',
-            spatial_transform=spatial_transform,
-            temporal_transform=temporal_transform,
-            target_transform=target_transform,
-            video_loader=loader,
-            video_path_formatter=video_path_formatter)
+        validation_data = VideoDataset(video_path,
+                                         annotation_path,
+                                         'validation',
+                                         spatial_transform=spatial_transform,
+                                         temporal_transform=temporal_transform,
+                                         target_transform=target_transform,
+                                         video_loader=loader,
+                                         video_path_formatter=video_path_formatter)
 
     return validation_data, collate_fn
 

@@ -26,8 +26,6 @@ def val_epoch(epoch,
     accuracies = AverageMeter()
 
     end_time = time.time()
-    for inputs, targets in data_loader:
-        print(inputs.shape, targets.shape)
 
     with torch.no_grad():
         for i, (inputs, targets) in enumerate(data_loader):

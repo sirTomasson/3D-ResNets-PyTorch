@@ -229,8 +229,12 @@ def get_val_utils(opt):
     temporal_transform = []
     if opt.sample_t_stride > 1:
         temporal_transform.append(TemporalSubsampling(opt.sample_t_stride))
-    temporal_transform.append(
-        TemporalEvenCrop(opt.sample_duration, opt.n_val_samples))
+
+    temporal_transform.append(TemporalCenterCrop(opt.sample_duration))
+    # NOTE: TemporalEvenCrop does NOT return a valid tensor, which breaks the code in the validation epoch
+    # for now we use TemporalCenterCrop
+    # temporal_transform.append(
+    #     TemporalEvenCrop(opt.sample_duration, opt.n_val_samples))
     temporal_transform = TemporalCompose(temporal_transform)
 
     val_data, collate_fn = get_validation_data(opt.video_path,

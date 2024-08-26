@@ -19,6 +19,7 @@ def load_ground_truth(ground_truth_path, subset):
     class_labels_map = get_class_labels(data)
 
     ground_truth = []
+
     for video_id, v in data['database'].items():
         if subset != v['subset']:
             continue

@@ -193,8 +193,10 @@ class ColorJitter(transforms.ColorJitter):
 
     def __call__(self, img):
         if self.randomize:
-            self.transform = self.get_params(self.brightness, self.contrast,
-                                             self.saturation, self.hue)
+            self.transform = transforms.ColorJitter(brightness=random.uniform(0.2, 0.4),
+                                                    contrast=random.uniform(0.2, 0.4),
+                                                    saturation=random.uniform(0.2, 0.4)
+            )
             self.randomize = False
 
         return self.transform(img)

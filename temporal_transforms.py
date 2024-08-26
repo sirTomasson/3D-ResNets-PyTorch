@@ -112,7 +112,7 @@ class TemporalEvenCrop(object):
             if len(out) >= self.n_samples:
                 break
             end_index = min(frame_indices[-1] + 1, begin_index + self.size)
-            sample = list(range(begin_index, end_index))
+            sample = list(frame_indices[begin_index:end_index])
 
             if len(sample) < self.size:
                 out.append(self.loop(sample))
@@ -121,7 +121,6 @@ class TemporalEvenCrop(object):
                 out.append(sample)
 
         return out
-
 
 class SlidingWindow(object):
 

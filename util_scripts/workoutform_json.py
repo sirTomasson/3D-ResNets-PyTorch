@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 from .utils import get_n_frames
 
+
 def load_json(path):
     assert os.path.exists(path), f'{path} does not exist'
     with open(path) as f:
@@ -14,19 +15,21 @@ def load_json(path):
 
 def get_subset_label(key, train, val, test):
     if key in train:
-      return 'training'
+        return 'training'
     elif key in val:
-      return 'validation'
+        return 'validation'
     else:
-      return 'testing'
-    
+        return 'testing'
+
+
 def get_label(key, kie, kfe):
-  if len(kie[key]) > 0:
-    return 'kie'
-  elif len(kfe[key]) > 0:
-    return 'kfe'
-  else:
-    return 'correct'
+    if len(kie[key]) > 0:
+        return 'kie'
+    elif len(kfe[key]) > 0:
+        return 'kfe'
+    else:
+        return 'correct'
+
 
 def convert_workoutform_json_to_json(dir_path, video_path, dst_json_path):
     labels_path = dir_path / 'Labels'
@@ -38,7 +41,7 @@ def convert_workoutform_json_to_json(dir_path, video_path, dst_json_path):
     test_json = load_json(splits_path / 'test_keys.json')
     database = {
         'labels': ['kie', 'kfe', 'correct'],
-        'database': { }
+        'database': {}
     }
     for video_dir in video_path.iterdir():
         database['database'][video_dir.name] = {}
@@ -46,13 +49,12 @@ def convert_workoutform_json_to_json(dir_path, video_path, dst_json_path):
                                                                           train_json,
                                                                           val_json,
                                                                           test_json)
-        
+
         annotations = {}
         annotations['label'] = get_label(video_dir.name, kie_json, kfe_json)
         annotations['segment'] = (1, get_n_frames(video_dir) + 1)
         database['database'][video_dir.name]['annotations'] = annotations
-          
-    
+
     with open(dst_json_path, 'w') as f:
         json.dump(database, f, indent=4)
 
